@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Mis citas')}"></head>
+<body>
+<div class="container">
+    <aside th:replace="~{fragments/layout :: sidebar('citas')}"></aside>
+
+    <main class="content">
+        <h1>Mis citas</h1>
+        <div th:replace="~{fragments/layout :: mensajes}"></div>
+
+        <div class="acciones"><a class="boton" th:href="@{/paciente/citas/nueva}">Solicitar nueva cita</a></div>
+
+        <div class="tasks-group">
+            <p th:if="${#lists.isEmpty(citas)}">Aún no tiene citas registradas.</p>
+
+            <table class="tabla" th:unless="${#lists.isEmpty(citas)}">
+                <thead>
+                <tr><th>Fecha</th><th>Hora</th><th>Estado</th><th></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="cita : ${citas}" th:classappend="${cita.estado.name() == 'CANCELADA'} ? 'cancelada'">
+                    <td th:text="${#temporals.format(cita.fecha, 'EEEE dd/MM/yyyy')}">lunes 01/01/2026</td>
+                    <td th:text="${#temporals.format(cita.hora, 'HH:mm')}">08:00</td>
+                    <td>
+                        <span class="etiqueta activa" th:if="${cita.estado.name() == 'ACTIVA'}">Activa</span>
+                        <span class="etiqueta cancelada" th:if="${cita.estado.name() == 'CANCELADA'}">Cancelada</span>
+                    </td>
+                    <td>
+                        <form th:if="${cita.estado.name() == 'ACTIVA'}"
+                              th:action="@{/paciente/citas/{id}/cancelar(id=${cita.id})}" method="post"
+                              onsubmit="return confirm('¿Desea cancelar esta cita?');">
+                            <button class="boton peligro pequeno" type="submit">Cancelar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+</body>
+</html>

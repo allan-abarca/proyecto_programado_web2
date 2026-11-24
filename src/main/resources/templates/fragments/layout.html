@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8">
+    <title th:text="${titulo} + ' - Clínica Dental'">Clínica Dental</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" th:href="@{/css/styles.css}" />
+</head>
+<body>
+
+<!-- Menú lateral: cambia según el perfil de la sesión. "activo" marca la opción actual. -->
+<aside class="sidebar" th:fragment="sidebar(activo)">
+    <div class="logo">
+        <a th:href="@{/}">🦷 <span>Clínica Dental</span></a>
+    </div>
+
+    <nav class="navigation">
+        <!-- Visitante sin sesión -->
+        <th:block th:if="${session.usuario == null}">
+            <h3>Menú</h3>
+            <ul>
+                <li><a th:href="@{/}" th:classappend="${activo == 'inicio'} ? 'activo'">Inicio</a></li>
+                <li><a th:href="@{/login}" th:classappend="${activo == 'login'} ? 'activo'">Iniciar sesión</a></li>
+                <li><a th:href="@{/registro}" th:classappend="${activo == 'registro'} ? 'activo'">Registrarse</a></li>
+            </ul>
+        </th:block>
+
+        <!-- Paciente -->
+        <th:block th:if="${session.usuario != null and session.usuario.tipo.name() == 'PACIENTE'}">
+            <h3>Paciente</h3>
+            <ul>
+                <li><a th:href="@{/paciente/inicio}" th:classappend="${activo == 'inicio'} ? 'activo'">Inicio</a></li>
+                <li><a th:href="@{/paciente/citas}" th:classappend="${activo == 'citas'} ? 'activo'">Mis citas</a></li>
+                <li><a th:href="@{/paciente/citas/nueva}" th:classappend="${activo == 'nueva'} ? 'activo'">Solicitar cita</a></li>
+                <li><a th:href="@{/logout}">Cerrar sesión</a></li>
+            </ul>
+        </th:block>
+
+        <!-- Personal administrativo -->
+        <th:block th:if="${session.usuario != null and session.usuario.tipo.name() == 'ADMIN'}">
+            <h3>Administración</h3>
+            <ul>
+                <li><a th:href="@{/admin/inicio}" th:classappend="${activo == 'inicio'} ? 'activo'">Inicio</a></li>
+                <li><a th:href="@{/admin/agenda}" th:classappend="${activo == 'agenda'} ? 'activo'">Agenda</a></li>
+                <li><a th:href="@{/admin/citas/nueva}" th:classappend="${activo == 'nueva'} ? 'activo'">Agendar cita</a></li>
+                <li><a th:href="@{/logout}">Cerrar sesión</a></li>
+            </ul>
+        </th:block>
+    </nav>
+</aside>
+
+<!-- Mensajes de éxito / error que llegan desde los controladores (flash attributes) -->
+<div th:fragment="mensajes">
+    <div class="mensaje exito" th:if="${exito}" th:text="${exito}">Operación exitosa</div>
+    <div class="mensaje error" th:if="${error}" th:text="${error}">Ocurrió un error</div>
+</div>
+
+<!-- Tarjeta con los datos del usuario de la sesión -->
+<div class="user-card" th:fragment="tarjetaUsuario">
+    <div class="user-avatar" th:text="${#strings.substring(session.usuario.nombre, 0, 1)}">U</div>
+    <div class="user-info">
+        <div class="user-name" th:text="${session.usuario.nombre}">Nombre Apellido</div>
+        <div class="user-meta">Usuario: <span th:text="${session.usuario.username}">usuario</span></div>
+        <div class="user-meta">Correo: <span th:text="${session.usuario.email}">correo@ejemplo.com</span></div>
+        <div class="user-meta">Perfil: <span th:text="${session.usuario.tipo.name() == 'ADMIN' ? 'Personal administrativo' : 'Paciente'}">Paciente</span></div>
+    </div>
+</div>
+</body>
+</html>

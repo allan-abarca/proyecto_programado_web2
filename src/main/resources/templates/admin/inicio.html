@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Inicio administración')}"></head>
+<body>
+<div class="container">
+    <aside th:replace="~{fragments/layout :: sidebar('inicio')}"></aside>
+
+    <main class="content">
+        <h1>Panel de administración</h1>
+        <div th:replace="~{fragments/layout :: tarjetaUsuario}"></div>
+
+        <div class="acciones">
+            <a class="boton" th:href="@{/admin/agenda}">Ver agenda de hoy</a>
+            <a class="boton secundario" th:href="@{/admin/agenda(vista='semana')}">Ver agenda semanal</a>
+            <a class="boton secundario" th:href="@{/admin/citas/nueva}">Agendar una cita</a>
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Registro')}"></head>
+<body>
+<div class="container">
+    <aside th:replace="~{fragments/layout :: sidebar('registro')}"></aside>
+
+    <main class="content">
+        <h1>Registro de paciente</h1>
+
+        <form class="formulario" th:action="@{/registro}" method="post" th:object="${registroForm}">
+            <label for="nombre">Nombre completo</label>
+            <input id="nombre" type="text" th:field="*{nombre}" />
+            <span class="validationError" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">Error</span>
+
+            <label for="email">Correo electrónico</label>
+            <input id="email" type="text" th:field="*{email}" />
+            <span class="validationError" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Error</span>
+
+            <label for="username">Nombre de usuario</label>
+            <input id="username" type="text" th:field="*{username}" />
+            <span class="validationError" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Error</span>
+
+            <label for="password">Contraseña</label>
+            <input id="password" type="password" th:field="*{password}" />
+            <span class="validationError" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Error</span>
+
+            <button class="boton" type="submit">Crear cuenta</button>
+        </form>
+
+        <p class="nota">¿Ya tiene cuenta? <a th:href="@{/login}">Inicie sesión</a>.</p>
+    </main>
+</div>
+</body>
+</html>

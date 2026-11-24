@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Agendar cita')}"></head>
+<body>
+<div class="container">
+    <aside th:replace="~{fragments/layout :: sidebar('nueva')}"></aside>
+
+    <main class="content">
+        <h1>Agendar cita para un paciente</h1>
+        <div th:replace="~{fragments/layout :: mensajes}"></div>
+
+        <form class="formulario en-linea" th:action="@{/admin/citas/nueva}" method="get">
+            <label for="fecha">Fecha</label>
+            <input id="fecha" name="fecha" type="date" th:min="${hoy}" th:value="${fecha}" required />
+            <button class="boton" type="submit">Ver horarios</button>
+        </form>
+
+        <div class="tasks-group" th:if="${fecha != null}">
+            <h3>Horarios disponibles para <span th:text="${#temporals.format(fecha, 'EEEE dd/MM/yyyy')}">fecha</span></h3>
+
+            <p th:if="${#lists.isEmpty(horarios)}">No hay horarios disponibles en esa fecha. Pruebe con otra.</p>
+
+            <form th:unless="${#lists.isEmpty(horarios)}" class="formulario" th:action="@{/admin/citas}" method="post">
+                <input type="hidden" name="fecha" th:value="${fecha}" />
+
+                <label for="pacienteId">Paciente</label>
+                <select id="pacienteId" name="pacienteId" required>
+                    <option value="">Seleccione un paciente</option>
+                    <option th:each="p : ${pacientes}" th:value="${p.id}" th:text="${p.nombre + ' (' + p.username + ')'}">Paciente</option>
+                </select>
+
+                <label for="hora">Horario</label>
+                <select id="hora" name="hora" required>
+                    <option th:each="h : ${horarios}" th:value="${#temporals.format(h, 'HH:mm')}" th:text="${#temporals.format(h, 'HH:mm')}">08:00</option>
+                </select>
+
+                <button class="boton" type="submit">Guardar cita</button>
+            </form>
+        </div>
+    </main>
+</div>
+</body>
+</html>

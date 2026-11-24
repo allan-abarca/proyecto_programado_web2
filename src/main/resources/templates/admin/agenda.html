@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Agenda')}"></head>
+<body>
+<div class="container">
+    <aside th:replace="~{fragments/layout :: sidebar('agenda')}"></aside>
+
+    <main class="content">
+        <h1>Agenda <span th:text="${vista == 'semana'} ? 'semanal' : 'diaria'">diaria</span></h1>
+        <div th:replace="~{fragments/layout :: mensajes}"></div>
+
+        <!-- Cambio de vista y navegación entre periodos -->
+        <div class="barra-agenda">
+            <div class="pestanas">
+                <a th:href="@{/admin/agenda(vista='dia', fecha=${fecha})}" th:classappend="${vista == 'dia'} ? 'activo'">Día</a>
+                <a th:href="@{/admin/agenda(vista='semana', fecha=${fecha})}" th:classappend="${vista == 'semana'} ? 'activo'">Semana</a>
+            </div>
+            <div class="navegacion">
+                <a class="boton secundario pequeno" th:href="@{/admin/agenda(vista=${vista}, fecha=${anterior})}">« Anterior</a>
+                <a class="boton secundario pequeno" th:href="@{/admin/agenda(vista=${vista})}">Hoy</a>
+                <a class="boton secundario pequeno" th:href="@{/admin/agenda(vista=${vista}, fecha=${siguiente})}">Siguiente »</a>
+            </div>
+            <form class="en-linea" th:action="@{/admin/agenda}" method="get">
+                <input type="hidden" name="vista" th:value="${vista}" />
+                <input type="date" name="fecha" th:value="${fecha}" required />
+                <button class="boton pequeno" type="submit">Ir</button>
+            </form>
+        </div>
+
+        <h3 th:if="${vista == 'semana'}">
+            Semana del <span th:text="${#temporals.format(desde, 'dd/MM/yyyy')}">01/01/2026</span>
+            al <span th:text="${#temporals.format(hasta, 'dd/MM/yyyy')}">05/01/2026</span>
+        </h3>
+
+        <!-- Un bloque por día del periodo -->
+        <section class="tasks-group" th:each="dia : ${porDia}">
+            <h3 th:text="${#temporals.format(dia.key, 'EEEE dd/MM/yyyy')}">lunes 01/01/2026</h3>
+
+            <p th:if="${#lists.isEmpty(dia.value)}">No hay citas para este día.</p>
+
+            <table class="tabla" th:unless="${#lists.isEmpty(dia.value)}">
+                <thead>
+                <tr><th>Hora</th><th>Paciente</th><th>Correo</th><th></th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="cita : ${dia.value}">
+                    <td th:text="${#temporals.format(cita.hora, 'HH:mm')}">08:00</td>
+                    <td th:text="${cita.paciente.nombre}">Paciente</td>
+                    <td th:text="${cita.paciente.email}">correo@ejemplo.com</td>
+                    <td>
+                        <form th:action="@{/admin/citas/{id}/cancelar(id=${cita.id})}" method="post"
+                              onsubmit="return confirm('¿Desea cancelar esta cita?');">
+                            <input type="hidden" name="vista" th:value="${vista}" />
+                            <input type="hidden" name="fecha" th:value="${fecha}" />
+                            <button class="boton peligro pequeno" type="submit">Cancelar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+</div>
+</body>
+</html>

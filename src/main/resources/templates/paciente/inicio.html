@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Inicio del paciente')}"></head>
+<body>
+<div class="container">
+    <aside th:replace="~{fragments/layout :: sidebar('inicio')}"></aside>
+
+    <main class="content">
+        <h1>Bienvenido, <span th:text="${session.usuario.nombre}">Paciente</span></h1>
+        <div th:replace="~{fragments/layout :: tarjetaUsuario}"></div>
+
+        <div class="acciones">
+            <a class="boton" th:href="@{/paciente/citas/nueva}">Solicitar una cita</a>
+            <a class="boton secundario" th:href="@{/paciente/citas}">Ver mis citas</a>
+        </div>
+    </main>
+</div>
+</body>
+</html>

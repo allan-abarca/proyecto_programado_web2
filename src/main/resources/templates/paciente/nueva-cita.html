@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Solicitar cita')}"></head>
+<body>
+<div class="container">
+    <aside th:replace="~{fragments/layout :: sidebar('nueva')}"></aside>
+
+    <main class="content">
+        <h1>Solicitar cita</h1>
+        <div th:replace="~{fragments/layout :: mensajes}"></div>
+
+        <!-- Paso 1: elegir la fecha -->
+        <form class="formulario en-linea" th:action="@{/paciente/citas/nueva}" method="get">
+            <label for="fecha">Fecha de la cita</label>
+            <input id="fecha" name="fecha" type="date" th:min="${hoy}" th:value="${fecha}" required />
+            <button class="boton" type="submit">Ver horarios</button>
+        </form>
+
+        <!-- Paso 2: elegir uno de los horarios disponibles de esa fecha -->
+        <div class="tasks-group" th:if="${fecha != null}">
+            <h3>Horarios disponibles para <span th:text="${#temporals.format(fecha, 'EEEE dd/MM/yyyy')}">fecha</span></h3>
+
+            <p th:if="${#lists.isEmpty(horarios)}">
+                No hay horarios disponibles en esa fecha (puede ser fin de semana, una fecha pasada o un día completo).
+                Pruebe con otra fecha.
+            </p>
+
+            <div class="horarios">
+                <form th:each="h : ${horarios}" th:action="@{/paciente/citas}" method="post">
+                    <input type="hidden" name="fecha" th:value="${fecha}" />
+                    <input type="hidden" name="hora" th:value="${#temporals.format(h, 'HH:mm')}" />
+                    <button class="boton horario" type="submit" th:text="${#temporals.format(h, 'HH:mm')}">08:00</button>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

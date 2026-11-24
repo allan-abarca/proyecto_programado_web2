@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Inicio')}"></head>
+<body>
+<div class="container">
+    <aside th:replace="~{fragments/layout :: sidebar('inicio')}"></aside>
+
+    <main class="content">
+        <div class="mensaje error" th:if="${param.error != null and param.error[0] == 'sin_permiso'}">
+            No tiene permiso para acceder a esa sección.
+        </div>
+        <div class="mensaje exito" th:if="${param.logout != null}">Sesión cerrada correctamente.</div>
+
+        <h1>Bienvenido a Clínica Dental</h1>
+        <p>
+            Somos una clínica privada de odontología. Desde este sitio los pacientes pueden solicitar y cancelar
+            sus citas en línea, y el personal administrativo gestiona las citas y consulta la agenda diaria o semanal.
+        </p>
+
+        <div th:if="${session.usuario == null}" class="acciones">
+            <a class="boton" th:href="@{/login}">Iniciar sesión</a>
+            <a class="boton secundario" th:href="@{/registro}">Registrarme como paciente</a>
+        </div>
+        <div th:if="${session.usuario != null}" class="acciones">
+            <a class="boton"
+               th:href="${session.usuario.tipo.name() == 'ADMIN'} ? @{/admin/inicio} : @{/paciente/inicio}">Ir a mi inicio</a>
+        </div>
+
+        <div class="tasks-grid info-grid">
+            <section class="tasks-group"><h3>Pacientes</h3><p>Solicite una cita eligiendo fecha y un horario disponible, y cancélela cuando lo necesite.</p></section>
+            <section class="tasks-group"><h3>Horario de atención</h3><p>Lunes a viernes, de 8:00 a 17:00. Cada horario admite una sola cita.</p></section>
+            <section class="tasks-group"><h3>Personal administrativo</h3><p>Consulte la agenda del día o de la semana y gestione las citas de los pacientes.</p></section>
+        </div>
+    </main>
+</div>
+</body>
+</html>
